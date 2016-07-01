@@ -34,40 +34,33 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
     //        seconds = Number(seconds);
     //    }
     //}
-    if (isNaN(seconds))
-    {
+    if (isNaN(seconds)) {
         console.log('input not in specified format ' +
                     'please use timeSpan(HH,mm,ss) or specify ' +
                     'a format string as timeSpan(\'12:30\',\'HH:mm\')');
         return;
     }
-    if (typeof hours == 'string' && typeof minutes == 'string')
-    {
+    if (typeof hours == 'string' && typeof minutes == 'string') {
         // parse
-        if(!isNaN(hours) && !isNaN(minutes))
-        {
+        if (!isNaN(hours) && !isNaN(minutes)) {
             // is a string representation of a number
             hours = Number(hours);
             minutes = Number(minutes);
         }
-        else
-        {
+        else {
             // is a time and format
             var timeArr = hours.split(':');
             var formatArr = minutes.split(':');
             // check format matches input
-            if(timeArr.length != formatArr.length)
-            {
+            if (timeArr.length != formatArr.length) {
                 console.log('Format string must match input string');
                 return;
             }
             // reset variables ready for load
             hours = minutes = seconds = 0;
             // loop and load variables
-            for(var i=0;i<timeArr.length;i++)
-            {
-                switch (formatArr[i])
-                {
+            for (var i = 0; i < timeArr.length; i++) {
+                switch (formatArr[i]) {
                     case 'HH':
                         hours = Number(timeArr[i]);
                         break;
@@ -84,19 +77,15 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
             }
         }
     }
-    else if (typeof hours == 'string')
-    {
-        if(!isNaN(hours))
-        {
+    else if (typeof hours == 'string') {
+        if (!isNaN(hours)) {
             // string rep of hours
             hours = Number(hours);
         }
-        else
-        {
+        else {
             // default format starts at hours
             var timeArr = hours.split(':');
-            switch (timeArr.length)
-            {
+            switch (timeArr.length) {
                 case 1:
                     hours = Number(timeArr[0]);
                     break;
@@ -115,40 +104,42 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
         }
     }
     // cleanup
-    if (isNaN(hours))
-    {
+    if (isNaN(hours)) {
         hours = 0;
     }
-    if (isNaN(minutes))
-    {
+    if (isNaN(minutes)) {
         minutes = 0;
     }
-    if (isNaN(seconds))
-    {
+    if (isNaN(seconds)) {
         seconds = 0;
+    }
+    while (seconds >= 60) {
+        minutes++;
+        seconds -= 60;
+    }
+    while (minutes >= 60) {
+        hours++;
+        minutes -= 60;
     }
 
     this.Hours = hours;
     this.Minutes = minutes;
     this.Seconds = seconds;
-    this.Add = function(addHours, addMinutes, addSeconds) {
+    this.Add = function (addHours, addMinutes, addSeconds) {
         // validate
-        if (isNaN(addHours) || isNaN(addMinutes) || isNaN(addSeconds))
-        {
+        if (isNaN(addHours) || isNaN(addMinutes) || isNaN(addSeconds)) {
             console.log('please input hours,minutes,seconds to add');
             return;
         }
-            
+
         this.Seconds += addSeconds;
-        if(this.Seconds >= 60)
-        {
+        while (this.Seconds >= 60) {
             this.Minutes++;
             this.Seconds -= 60;
         }
 
         this.Minutes += addMinutes;
-        if(this.Minutes >= 60)
-        {
+        while (this.Minutes >= 60) {
             this.Hours++;
             this.Minutes -= 60;
         }
@@ -156,50 +147,46 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
         this.Hours += addHours;
         return this;
     };
-    this.AddHours = function(addHours) {
+    this.AddHours = function (addHours) {
         // validate
-        if (isNaN(addHours))
-        {
+        if (isNaN(addHours)) {
             console.log('input a number representation of hours to add');
             return;
         }
         this.Hours += addHours;
         return this;
     };
-    this.AddMinutes = function(addMinutes) {
+    this.AddMinutes = function (addMinutes) {
         // validate
         if (isNaN(addMinutes)) {
             console.log('input a number representation of minutes to add');
             return;
         }
         this.Minutes += addMinutes;
-        if(this.Minutes >= 60)
-        {
+        while (this.Minutes >= 60) {
             this.Hours++;
             this.Minutes -= 60;
         }
         return this;
     };
-    this.AddSeconds = function(addSeconds) {
+    this.AddSeconds = function (addSeconds) {
         // validate
         if (isNaN(addSeconds)) {
             console.log('input a number representation of seconds to add');
             return;
         }
         this.Seconds += addSeconds;
-        if(this.Seconds >= 60)
-        {
+        while (this.Seconds >= 60) {
             this.Minutes++;
             this.Seconds -= 60;
-            if(this.Minutes >= 60)
-            {
+            if (this.Minutes >= 60) {
                 this.Hours++;
                 this.Minutes -= 60;
             }
         }
         return this;
     };
-    this.AddTimeSpan = function(addTimeSpan) {
+    this.AddTimeSpan = function (addTimeSpan) {
         this.Seconds += addTimeSpan.Seconds;
         if (this.Seconds >= 60) {
             this.Minutes++;
@@ -217,12 +204,12 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
         this.Hours += addTimeSpan.Hours;
         return this;
     };
-    this.Equals = function(anotherTimeSpan) {
+    this.Equals = function (anotherTimeSpan) {
         return this.Hours == anotherTimeSpan.Hours &&
                this.Minutes == anotherTimeSpan.Minutes &&
                this.Seconds == anotherTimeSpan.Seconds;
     };
-    this.IsGreaterThan = function(anotherTimeSpan) {
+    this.IsGreaterThan = function (anotherTimeSpan) {
         return this.Hours > anotherTimeSpan.Hours ||
               (this.Hours >= anotherTimeSpan.Hours &&
                this.Minutes > anotherTimeSpan.Minutes) ||
@@ -237,5 +224,99 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
               (this.Hours <= anotherTimeSpan.Hours &&
                this.Minutes <= anotherTimeSpan.Minutes &&
                this.Seconds < anotherTimeSpan.Seconds);
+    };
+    this.ToString = function (format) {
+        if (!format) {
+            var returnString = '';
+            if (this.Hours < 10) {
+                returnString += '0' + String(this.Hours) + ':';
+            }
+            else {
+                returnString += String(this.Hours) + ':';
+            }
+            if (this.Minutes < 10) {
+                returnString += '0' + String(this.Minutes) + ':';
+            }
+            else {
+                returnString += String(this.Minutes) + ':';
+            }
+            if (this.Seconds < 10) {
+                returnString += '0' + String(this.Seconds);
+            }
+            else {
+                returnString += String(this.Seconds);
+            }
+            return returnString;
+        }
+        try {
+            var formArr = format.split(':');
+            var returnString = '';
+            for (var i = 0; i < formArr.length; i++) {
+                switch (formArr[i]) {
+                    case 'HH':
+                        if (i == formArr.length - 1) {
+                            if (this.Hours < 10) {
+                                returnString += '0' + String(this.Hours);
+                            }
+                            else {
+                                returnString += String(this.Hours);
+                            }
+                        }
+                        else {
+                            if (this.Hours < 10) {
+                                returnString += '0' + String(this.Hours) + ':';
+                            }
+                            else {
+                                returnString += String(this.Hours) + ':';
+                            }
+                        }
+                        break;
+                    case 'mm':
+                        if (i == formArr.length - 1) {
+                            if (this.Minutes < 10) {
+                                returnString += '0' + String(this.Minutes);
+                            }
+                            else {
+                                returnString += String(this.Minutes);
+                            }
+                        }
+                        else {
+                            if (this.Minutes < 10) {
+                                returnString += '0' + String(this.Minutes) + ':';
+                            }
+                            else {
+                                returnString += String(this.Minutes) + ':';
+                            }
+                        }
+                        break;
+                    case 'ss':
+                        if (i == formArr.length - 1) {
+                            if (this.Seconds < 10) {
+                                returnString += '0' + String(this.Seconds);
+                            }
+                            else {
+                                returnString += String(this.Seconds);
+                            }
+                        }
+                        else {
+                            if (this.Seconds < 10) {
+                                returnString += '0' + String(this.Seconds) + ':';
+                            }
+                            else {
+                                returnString += String(this.Seconds) + ':';
+                            }
+                        }
+                        break;
+                    default:
+                        console.log('format string was not recognised use HH:mm:ss');
+                        return
+                }
+            }
+            return returnString;
+        }
+        catch (ex) {
+            console.log(ex);
+        }
+
     };
 }
