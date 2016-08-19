@@ -214,9 +214,23 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
         return this;
     };
     this.Difference = function (otherTimeSpan) {
-        return new timeSpan(Math.abs(this.Hours - otherTimeSpan.Hours),
-                            Math.abs(this.Minutes - otherTimeSpan.Minutes),
-                            Math.abs(this.Seconds - otherTimeSpan.Seconds))
+        var hrs;
+        var mins;
+        var secs;
+        secs = this.Seconds - otherTimeSpan.Seconds;
+        mins = this.Minutes - otherTimeSpan.Minutes;
+        hrs = this.Hours - otherTimeSpan.Hours;
+        if (secs < 0) {
+            mins--;
+            secs = 60 + secs;
+        }
+        if (mins < 0) {
+            hrs--;
+            mins = 60 + mins;
+        }
+        return new timeSpan(Math.abs(hrs),
+                            Math.abs(mins),
+                            Math.abs(secs))
     };
     this.Equals = function (anotherTimeSpan) {
         return this.Hours == anotherTimeSpan.Hours &&
