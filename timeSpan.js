@@ -16,6 +16,8 @@
  * the format. This is most useful if not starting at hours.
  * example:
  * timeSpan('02:00','mm:ss') creates a timeSpan of two minutes.
+ *
+ * @author alex-irvine@hotmail.com
  */
 var timeSpan = function timeSpan(hours, minutes, seconds) {
     // allow simple string parse HH:mm:ss
@@ -23,17 +25,6 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
     hours = typeof hours !== 'undefined' ? hours : 0;
     minutes = typeof minutes !== 'undefined' ? minutes : 0;
     seconds = typeof seconds !== 'undefined' ? seconds : 0;
-    //if (typeof hours == 'string' && typeof minutes == 'string')
-    //{
-    //    // parse
-    //    if (!isNaN(hours) && !isNaN(minutes) && !isNaN(seconds))
-    //    {
-    //        // is a string representation of a number
-    //        hours = Number(hours);
-    //        minutes = Number(minutes);
-    //        seconds = Number(seconds);
-    //    }
-    //}
     if (isNaN(seconds)) {
         console.log('input not in specified format ' +
                     'please use timeSpan(HH,mm,ss) or specify ' +
@@ -203,6 +194,29 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
         }
         this.Hours += addTimeSpan.Hours;
         return this;
+    };
+    this.SubtractTimeSpan = function (subTimeSpan) {
+        this.Seconds -= subTimeSpan.Seconds;
+        if (this.Seconds < 0) {
+            this.Minutes--;
+            this.Seconds = 60 + this.Seconds;
+            if (this.Minutes < 0) {
+                this.Hours--;
+                this.Minutes = 60 + this.Minutes;
+            }
+        }
+        this.Minutes -= subTimeSpan.Minutes;
+        if (this.Minutes < 0) {
+            this.Hours--;
+            this.Minutes = 0 + this.Minutes;
+        }
+        this.Hours -= subTimeSpan.Hours;
+        return this;
+    };
+    this.Difference = function (otherTimeSpan) {
+        return new timeSpan(Math.abs(this.Hours - otherTimeSpan.Hours),
+                            Math.abs(this.Minutes - otherTimeSpan.Minutes),
+                            Math.abs(this.Seconds - otherTimeSpan.Seconds))
     };
     this.Equals = function (anotherTimeSpan) {
         return this.Hours == anotherTimeSpan.Hours &&
