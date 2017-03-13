@@ -19,7 +19,7 @@
  *
  * @author alex-irvine@hotmail.com
  */
-var timeSpan = function timeSpan(hours, minutes, seconds) {
+function timeSpan(hours, minutes, seconds) {
     // allow simple string parse HH:mm:ss
     // allow format for string as overload
     hours = typeof hours !== 'undefined' ? hours : 0;
@@ -116,235 +116,247 @@ var timeSpan = function timeSpan(hours, minutes, seconds) {
     this.Hours = hours;
     this.Minutes = minutes;
     this.Seconds = seconds;
-    this.Add = function (addHours, addMinutes, addSeconds) {
-        // validate
-        if (isNaN(addHours) || isNaN(addMinutes) || isNaN(addSeconds)) {
-            console.log('please input hours,minutes,seconds to add');
-            return;
-        }
 
-        this.Seconds += addSeconds;
-        while (this.Seconds >= 60) {
-            this.Minutes++;
-            this.Seconds -= 60;
-        }
+    return this;
+}
+timeSpan.prototype.constructor = timeSpan;
+timeSpan.prototype.Add = function (addHours, addMinutes, addSeconds) {
+    // validate
+    if (isNaN(addHours) || isNaN(addMinutes) || isNaN(addSeconds)) {
+        console.log('please input hours,minutes,seconds to add');
+        return;
+    }
 
-        this.Minutes += addMinutes;
-        while (this.Minutes >= 60) {
-            this.Hours++;
-            this.Minutes -= 60;
-        }
+    this.Seconds += addSeconds;
+    while (this.Seconds >= 60) {
+        this.Minutes++;
+        this.Seconds -= 60;
+    }
 
-        this.Hours += addHours;
-        return this;
-    };
-    this.AddHours = function (addHours) {
-        // validate
-        if (isNaN(addHours)) {
-            console.log('input a number representation of hours to add');
-            return;
-        }
-        this.Hours += addHours;
-        return this;
-    };
-    this.AddMinutes = function (addMinutes) {
-        // validate
-        if (isNaN(addMinutes)) {
-            console.log('input a number representation of minutes to add');
-            return;
-        }
-        this.Minutes += addMinutes;
-        while (this.Minutes >= 60) {
-            this.Hours++;
-            this.Minutes -= 60;
-        }
-        return this;
-    };
-    this.AddSeconds = function (addSeconds) {
-        // validate
-        if (isNaN(addSeconds)) {
-            console.log('input a number representation of seconds to add');
-            return;
-        }
-        this.Seconds += addSeconds;
-        while (this.Seconds >= 60) {
-            this.Minutes++;
-            this.Seconds -= 60;
-            if (this.Minutes >= 60) {
-                this.Hours++;
-                this.Minutes -= 60;
-            }
-        }
-        return this;
-    };
-    this.AddTimeSpan = function (addTimeSpan) {
-        this.Seconds += addTimeSpan.Seconds;
-        if (this.Seconds >= 60) {
-            this.Minutes++;
-            this.Seconds -= 60;
-            if (this.Minutes >= 60) {
-                this.Hours++;
-                this.Minutes -= 60;
-            }
-        }
-        this.Minutes += addTimeSpan.Minutes;
+    this.Minutes += addMinutes;
+    while (this.Minutes >= 60) {
+        this.Hours++;
+        this.Minutes -= 60;
+    }
+
+    this.Hours += addHours;
+    return this;
+};
+timeSpan.prototype.AddHours = function (addHours) {
+    // validate
+    if (isNaN(addHours)) {
+        console.log('input a number representation of hours to add');
+        return;
+    }
+    this.Hours += addHours;
+    return this;
+};
+timeSpan.prototype.AddMinutes = function (addMinutes) {
+    // validate
+    if (isNaN(addMinutes)) {
+        console.log('input a number representation of minutes to add');
+        return;
+    }
+    this.Minutes += addMinutes;
+    while (this.Minutes >= 60) {
+        this.Hours++;
+        this.Minutes -= 60;
+    }
+    return this;
+};
+timeSpan.prototype.AddSeconds = function (addSeconds) {
+    // validate
+    if (isNaN(addSeconds)) {
+        console.log('input a number representation of seconds to add');
+        return;
+    }
+    this.Seconds += addSeconds;
+    while (this.Seconds >= 60) {
+        this.Minutes++;
+        this.Seconds -= 60;
         if (this.Minutes >= 60) {
             this.Hours++;
             this.Minutes -= 60;
         }
-        this.Hours += addTimeSpan.Hours;
-        return this;
-    };
-    this.SubtractTimeSpan = function (subTimeSpan) {
-        this.Seconds -= subTimeSpan.Seconds;
-        if (this.Seconds < 0) {
-            this.Minutes--;
-            this.Seconds = 60 + this.Seconds;
-            if (this.Minutes < 0) {
-                this.Hours--;
-                this.Minutes = 60 + this.Minutes;
-            }
+    }
+    return this;
+};
+timeSpan.prototype.AddTimeSpan = function (addTimeSpan) {
+    this.Seconds += addTimeSpan.Seconds;
+    if (this.Seconds >= 60) {
+        this.Minutes++;
+        this.Seconds -= 60;
+        if (this.Minutes >= 60) {
+            this.Hours++;
+            this.Minutes -= 60;
         }
-        this.Minutes -= subTimeSpan.Minutes;
+    }
+    this.Minutes += addTimeSpan.Minutes;
+    if (this.Minutes >= 60) {
+        this.Hours++;
+        this.Minutes -= 60;
+    }
+    this.Hours += addTimeSpan.Hours;
+    return this;
+};
+timeSpan.prototype.SubtractTimeSpan = function (subTimeSpan) {
+    this.Seconds -= subTimeSpan.Seconds;
+    if (this.Seconds < 0) {
+        this.Minutes--;
+        this.Seconds = 60 + this.Seconds;
         if (this.Minutes < 0) {
             this.Hours--;
-            this.Minutes = 0 + this.Minutes;
+            this.Minutes = 60 + this.Minutes;
         }
-        this.Hours -= subTimeSpan.Hours;
-        return this;
-    };
-    this.Difference = function (otherTimeSpan) {
-        var hrs;
-        var mins;
-        var secs;
-        secs = this.Seconds - otherTimeSpan.Seconds;
-        mins = this.Minutes - otherTimeSpan.Minutes;
-        hrs = this.Hours - otherTimeSpan.Hours;
-        if (secs < 0) {
-            mins--;
-            secs = 60 + secs;
-        }
-        if (mins < 0) {
-            hrs--;
-            mins = 60 + mins;
-        }
-        return new timeSpan(Math.abs(hrs),
-                            Math.abs(mins),
-                            Math.abs(secs))
-    };
-    this.Equals = function (anotherTimeSpan) {
-        return this.Hours == anotherTimeSpan.Hours &&
-               this.Minutes == anotherTimeSpan.Minutes &&
-               this.Seconds == anotherTimeSpan.Seconds;
-    };
-    this.IsGreaterThan = function (anotherTimeSpan) {
-        return this.Hours > anotherTimeSpan.Hours ||
-              (this.Hours >= anotherTimeSpan.Hours &&
-               this.Minutes > anotherTimeSpan.Minutes) ||
-              (this.Hours >= anotherTimeSpan.Hours &&
-               this.Minutes >= anotherTimeSpan.Minutes &&
-               this.Seconds > anotherTimeSpan.Seconds);
-    };
-    this.IsLessThan = function (anotherTimeSpan) {
-        return this.Hours < anotherTimeSpan.Hours ||
-              (this.Hours <= anotherTimeSpan.Hours &&
-               this.Minutes < anotherTimeSpan.Minutes) ||
-              (this.Hours <= anotherTimeSpan.Hours &&
-               this.Minutes <= anotherTimeSpan.Minutes &&
-               this.Seconds < anotherTimeSpan.Seconds);
-    };
-    this.ToString = function (format) {
-        if (!format) {
-            var returnString = '';
-            if (this.Hours < 10) {
-                returnString += '0' + String(this.Hours) + ':';
-            }
-            else {
-                returnString += String(this.Hours) + ':';
-            }
-            if (this.Minutes < 10) {
-                returnString += '0' + String(this.Minutes) + ':';
-            }
-            else {
-                returnString += String(this.Minutes) + ':';
-            }
-            if (this.Seconds < 10) {
-                returnString += '0' + String(this.Seconds);
-            }
-            else {
-                returnString += String(this.Seconds);
-            }
-            return returnString;
-        }
-        try {
-            var formArr = format.split(':');
-            var returnString = '';
-            for (var i = 0; i < formArr.length; i++) {
-                switch (formArr[i]) {
-                    case 'HH':
-                        if (i == formArr.length - 1) {
-                            if (this.Hours < 10) {
-                                returnString += '0' + String(this.Hours);
-                            }
-                            else {
-                                returnString += String(this.Hours);
-                            }
-                        }
-                        else {
-                            if (this.Hours < 10) {
-                                returnString += '0' + String(this.Hours) + ':';
-                            }
-                            else {
-                                returnString += String(this.Hours) + ':';
-                            }
-                        }
-                        break;
-                    case 'mm':
-                        if (i == formArr.length - 1) {
-                            if (this.Minutes < 10) {
-                                returnString += '0' + String(this.Minutes);
-                            }
-                            else {
-                                returnString += String(this.Minutes);
-                            }
-                        }
-                        else {
-                            if (this.Minutes < 10) {
-                                returnString += '0' + String(this.Minutes) + ':';
-                            }
-                            else {
-                                returnString += String(this.Minutes) + ':';
-                            }
-                        }
-                        break;
-                    case 'ss':
-                        if (i == formArr.length - 1) {
-                            if (this.Seconds < 10) {
-                                returnString += '0' + String(this.Seconds);
-                            }
-                            else {
-                                returnString += String(this.Seconds);
-                            }
-                        }
-                        else {
-                            if (this.Seconds < 10) {
-                                returnString += '0' + String(this.Seconds) + ':';
-                            }
-                            else {
-                                returnString += String(this.Seconds) + ':';
-                            }
-                        }
-                        break;
-                    default:
-                        console.log('format string was not recognised use HH:mm:ss');
-                        return
-                }
-            }
-            return returnString;
-        }
-        catch (ex) {
-            console.log(ex);
-        }
-
-    };
+    }
+    this.Minutes -= subTimeSpan.Minutes;
+    if (this.Minutes < 0) {
+        this.Hours--;
+        this.Minutes = 0 + this.Minutes;
+    }
+    this.Hours -= subTimeSpan.Hours;
+    return this;
+};
+timeSpan.prototype.MultiplyTimeSpan = function (times) {
+    for (var i = 0; i < times; i++) {
+        this.AddTimeSpan(this);
+    }
+    return this;
+};
+timeSpan.prototype.Difference = function (otherTimeSpan) {
+    var hrs;
+    var mins;
+    var secs;
+    secs = this.Seconds - otherTimeSpan.Seconds;
+    mins = this.Minutes - otherTimeSpan.Minutes;
+    hrs = this.Hours - otherTimeSpan.Hours;
+    if (secs < 0) {
+        mins--;
+        secs = 60 + secs;
+    }
+    if (mins < 0) {
+        hrs--;
+        mins = 60 + mins;
+    }
+    return new timeSpan(Math.abs(hrs),
+                        Math.abs(mins),
+                        Math.abs(secs))
+};
+timeSpan.prototype.Equals = function (anotherTimeSpan) {
+    return this.Hours == anotherTimeSpan.Hours &&
+           this.Minutes == anotherTimeSpan.Minutes &&
+           this.Seconds == anotherTimeSpan.Seconds;
+};
+timeSpan.prototype.IsGreaterThan = function (anotherTimeSpan) {
+    return this.Hours > anotherTimeSpan.Hours ||
+          (this.Hours >= anotherTimeSpan.Hours &&
+           this.Minutes > anotherTimeSpan.Minutes) ||
+          (this.Hours >= anotherTimeSpan.Hours &&
+           this.Minutes >= anotherTimeSpan.Minutes &&
+           this.Seconds > anotherTimeSpan.Seconds);
+};
+timeSpan.prototype.IsLessThan = function (anotherTimeSpan) {
+    return this.Hours < anotherTimeSpan.Hours ||
+          (this.Hours <= anotherTimeSpan.Hours &&
+           this.Minutes < anotherTimeSpan.Minutes) ||
+          (this.Hours <= anotherTimeSpan.Hours &&
+           this.Minutes <= anotherTimeSpan.Minutes &&
+           this.Seconds < anotherTimeSpan.Seconds);
+};
+timeSpan.prototype.Clone = function () {
+    return new timeSpan(this.Hours, this.Minutes, this.Seconds);
 }
+timeSpan.prototype.ToString = function (format) {
+    if (!format) {
+        var returnString = '';
+        if (this.Hours < 10) {
+            returnString += '0' + String(this.Hours) + ':';
+        }
+        else {
+            returnString += String(this.Hours) + ':';
+        }
+        if (this.Minutes < 10) {
+            returnString += '0' + String(this.Minutes) + ':';
+        }
+        else {
+            returnString += String(this.Minutes) + ':';
+        }
+        if (this.Seconds < 10) {
+            returnString += '0' + String(this.Seconds);
+        }
+        else {
+            returnString += String(this.Seconds);
+        }
+        return returnString;
+    }
+    try {
+        var formArr = format.split(':');
+        var returnString = '';
+        for (var i = 0; i < formArr.length; i++) {
+            switch (formArr[i]) {
+                case 'HH':
+                    if (i == formArr.length - 1) {
+                        if (this.Hours < 10) {
+                            returnString += '0' + String(this.Hours);
+                        }
+                        else {
+                            returnString += String(this.Hours);
+                        }
+                    }
+                    else {
+                        if (this.Hours < 10) {
+                            returnString += '0' + String(this.Hours) + ':';
+                        }
+                        else {
+                            returnString += String(this.Hours) + ':';
+                        }
+                    }
+                    break;
+                case 'mm':
+                    if (i == formArr.length - 1) {
+                        if (this.Minutes < 10) {
+                            returnString += '0' + String(this.Minutes);
+                        }
+                        else {
+                            returnString += String(this.Minutes);
+                        }
+                    }
+                    else {
+                        if (this.Minutes < 10) {
+                            returnString += '0' + String(this.Minutes) + ':';
+                        }
+                        else {
+                            returnString += String(this.Minutes) + ':';
+                        }
+                    }
+                    break;
+                case 'ss':
+                    if (i == formArr.length - 1) {
+                        if (this.Seconds < 10) {
+                            returnString += '0' + String(this.Seconds);
+                        }
+                        else {
+                            returnString += String(this.Seconds);
+                        }
+                    }
+                    else {
+                        if (this.Seconds < 10) {
+                            returnString += '0' + String(this.Seconds) + ':';
+                        }
+                        else {
+                            returnString += String(this.Seconds) + ':';
+                        }
+                    }
+                    break;
+                default:
+                    console.log('format string was not recognised use HH:mm:ss');
+                    return
+            }
+        }
+        return returnString;
+    }
+    catch (ex) {
+        console.log(ex);
+    }
+
+};
